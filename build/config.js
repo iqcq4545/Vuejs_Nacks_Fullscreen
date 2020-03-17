@@ -1,6 +1,6 @@
 module.exports = {
   publicPathDev: "/",
-  publicPathProd: "/fullscreen/",
+  publicPathProd: "/screen/",
 
   //项目构建后的存放目录
   buildDirectory: '.dist',

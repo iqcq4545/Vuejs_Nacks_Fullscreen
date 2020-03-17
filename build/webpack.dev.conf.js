@@ -28,15 +28,8 @@ module.exports = merge(baseWebpackConfig, {
           //return _path.replace(/\/api\/.*\/([^?]+)(\?.*)?/, '/api/$1.json')
         }
       },
-      // '/': {
-      //   target: `http://nacks.asuncloud.com`,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '^/': '/'   //重写接口
-      //   },
-      // },
       '/': {
-        target: `http://device.nacks.com:9002`,
+        target: `http://device.nacks.com:9002/`,
         changeOrigin: true,
         pathRewrite: {
           '^/': '/'   //重写接口
