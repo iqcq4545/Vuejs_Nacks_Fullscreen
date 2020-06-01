@@ -14,11 +14,9 @@ module.exports = merge(baseWebpackConfig, {
   },
   devServer: {
     contentBase: utils.resolve(config.buildDirectory),
-    allowedHosts: [
-      '0.0.0.0'
-    ],
+    allowedHosts: ['0.0.0.0'],
     port: config.devPort,
-    open: true,
+    // open: true,
     proxy: {
       '/api': {
         target: `http://0.0.0.0:${config.mockPort}`,

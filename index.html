@@ -15,7 +15,9 @@
   <title>设备管理平台</title>
   <script type="text/javascript">
     function fontSize() {
-      document.getElementsByTagName("html")[0].style.fontSize = 50 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 375 + 'px';
+      var rem = 50 * (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) / 375;
+      document.getElementsByTagName("html")[0].style.fontSize = rem + 'px';
+      return rem;
     };
     fontSize();
   </script>

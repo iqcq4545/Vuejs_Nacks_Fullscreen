@@ -11,8 +11,8 @@
 
 <script>
   console.log('App.vue');
-  import Toast from '@/components/Toast';
-  import Confirm from '@/components/Confirm';
+  import Toast from "@/components/Toast";
+  import Confirm from "@/components/Confirm";
 
   export default {
     name: 'App',
@@ -27,7 +27,7 @@
       return {
         isReload: true,
         ToastOption: { text: undefined, icon: undefined, timer: undefined, isShow: false },
-        ConfirmOption: { text: undefined, icon: undefined, action: undefined, isShow: false }
+        ConfirmOption: { text: undefined, icon: undefined, action: undefined, isShow: false },
       }
     },
     components: {
@@ -51,10 +51,10 @@
         })
       },
       Toast(option, duration = 2000) {
-        var that = this, k = ["text", "icon"];
+        var that = this,
+          k = ["text", "icon"];
         if (duration === 0) {
           that.ToastOption.isShow = false;
-          document.body.style.overflow = "";
           return false;
         }
         return new Promise((reslove, reject) => {
@@ -63,18 +63,20 @@
             that.ToastOption[k[i]] = option[k[i]];
           }
           that.ToastOption.isShow = true;
-          document.body.style.overflow = "hidden";
-          that.ToastOption.timer = setTimeout(function () { that.ToastOption.isShow = false; document.body.style.overflow = ""; reslove(true); }, duration);
-        })
+          that.ToastOption.timer = setTimeout(function () {
+            that.ToastOption.isShow = false;
+            reslove(true);
+          }, duration);
+        });
       },
       Confirm(option) {
-        var that = this, k = ["text", "action"];
+        var that = this,
+          k = ["text", "action"];
         for (var i in k) {
           that.ConfirmOption[k[i]] = option[k[i]];
         }
         that.ConfirmOption.isShow = true;
-        document.body.style.overflow = "hidden";
-      }
+      },
     }
 
   }

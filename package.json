@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config ./build/webpack.prod.conf.js",
-    "dev": "webpack-dev-server --config ./build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --config ./build/webpack.dev.conf.js --host 0.0.0.0",
     "mock-stop": "forever stopall",
     "mock-restart": "forever restartall",
     "mock": "npm run mock-stop && forever start ./mock/mock-server.js",
