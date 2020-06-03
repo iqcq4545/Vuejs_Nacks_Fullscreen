@@ -89,28 +89,26 @@
           </p>
         </div>
 
-        <div class="main1">
-          <ul>
-            <li @click="">
-              <h3>IoT设备</h3>
-              <p>{{countIoT.count}}</p>
-            </li>
-            <li @click="getIoTList(0)">
-              <h3>离线设备</h3>
-              <p>{{countIoT.offline}}</p>
-            </li>
-          </ul>
-          <ul v-if="deviceCheck.x" class="fr">
-            <li>
-              <h3>点检总数</h3>
-              <p>{{sum(deviceCheck.y)||0}}</p>
-            </li>
-            <li>
-              <h3>点检项总数</h3>
-              <p>{{deviceCheck.x.length}}</p>
-            </li>
-          </ul>
-        </div>
+        <ul class="main1" style="z-index:10">
+          <li @click="">
+            <h3>IoT设备</h3>
+            <p>{{countIoT.count}}</p>
+          </li>
+          <li @click="getIoTList(0)">
+            <h3>离线设备</h3>
+            <p>{{countIoT.offline}}</p>
+          </li>
+        </ul>
+        <ul v-if="deviceCheck.x" class="main1" style="right:0">
+          <li>
+            <h3>点检总数</h3>
+            <p>{{sum(deviceCheck.y)||0}}</p>
+          </li>
+          <li>
+            <h3>点检项总数</h3>
+            <p>{{deviceCheck.x.length}}</p>
+          </li>
+        </ul>
 
         <ul class="main2">
           <li @click="getIoTList(1)">
@@ -199,7 +197,8 @@
       </div>
     </div>
 
-    <div v-if="PopupOption.isShow" class="Popup" :class="PopupOption.type" ref="Popup">
+    <div v-if="PopupOption.isShow" v-show="!PopupCharts.isShow" class="Popup"
+      :class="PopupOption.type+' '+PopupOption.size" ref="Popup">
       <div class="top">
         <h3>{{PopupOption.title}}</h3>
         <img class="close" src="@/images/pop_close.png" @click="closePopup()" />
@@ -243,28 +242,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item,i) in PopupOption.pageData" @click="ShowCharts(item.Id)">
-            <td>{{item.Name}}</td>
-            <td>{{item.Style}}</td>
-            <td style="width:.5rem">{{item.StatusName}}</td>
-            <td>{{item.UpdateTime}}</td>
-            <td style="color:#96d2ff">查看数据</td>
+          <tr v-for="(item,i) in PopupOption.pageData" @click="ShowCharts(item.Id,item.Name)">
+            <td>{{item.Name||"--"}}</td>
+            <td>{{item.Style||"--"}}</td>
+            <td style="width:.5rem">{{item.StatusName||"--"}}</td>
+            <td>{{item.UpdateTime||"--"}}</td>
+            <td style="color:#01a6ff">查看数据</td>
           </tr>
         </tbody>
         <tfoot>
           <ul>
-            <li @click="switchPage(PopupOption.pageIdx-1,4,IoTList)">上一页</li>
+            <li @click="switchPage(PopupOption.pageIdx-1,10,IoTList)">上一页</li>
             <li v-for="(item,i) in PopupOption.pagination" :class="PopupOption.pageIdx===item?'on':''"
-              @click="switchPage(item,4,IoTList)">{{item}}</li>
-            <li @click="switchPage(PopupOption.pageIdx+1,4,IoTList)">下一页</li>
+              @click="switchPage(item,10,IoTList)">{{item}}</li>
+            <li @click="switchPage(PopupOption.pageIdx+1,10,IoTList)">下一页</li>
           </ul>
         </tfoot>
       </table>
     </div>
 
-    <div v-show="PopupCharts" class="Popup charts">
+    <div v-show="PopupCharts.isShow" class="Popup charts">
       <div class="top">
-        <h3>{{PopupOption.title}}</h3>
+        <h3>{{PopupCharts.title}}</h3>
         <img class="close" src="@/images/pop_close.png" @click="closeCharts" />
       </div>
 
@@ -283,7 +282,7 @@
     height: 1.34rem;
     left: 1.91rem;
     top: 40%;
-    margin-top: -.58rem;
+    margin-top: -.586rem;
     z-index: 999;
     color: #fff;
     font-size: .09rem;
@@ -307,6 +306,7 @@
   .Popup.error {
     background-image: url(../../images/pop_bg_error.png);
   }
+
 
   .Popup.warn {
     text-align: left;
@@ -418,6 +418,18 @@
     color: #20fffa;
   }
 
+
+  .Popup.large {
+    background-image: url(../../images/pop_lg_info.png);
+    height: 2.22rem;
+    margin-top: -.77rem;
+  }
+
+  .Popup.large table.mid.page tbody {
+    margin: .015rem 0 0 0;
+    height: 1.5625rem;
+  }
+
   .Popup.charts #mulBar {
     text-align: left;
     background: #0b1a4a;
@@ -452,9 +464,7 @@
             },
           },
           line: {
-            lineStyle: {
-              color: "#282896"
-            },
+            lineStyle: { color: "#282896" },
           }
         },
         count: {
@@ -535,7 +545,7 @@
 
         IoTList: [],
 
-        PopupCharts: undefined,
+        PopupCharts: { title: "设备图表", isShow: false },
 
         pollingTimer: undefined,
         pollingCount: { complete: 0, total: 12 },
@@ -896,18 +906,14 @@
             xAxis: [{
               type: "category",
               axisLine: that.chartColor.line,
-              axisTick: {
-                show: false
-              },
+              axisTick: { show: false },
               axisLabel: that.chartColor.text,
               data: data.x
             }],
             yAxis: [{
               type: "value",
               axisLine: that.chartColor.line,
-              axisTick: {
-                show: false
-              },
+              axisTick: { show: false },
               axisLabel: that.chartColor.text,
               splitLine: that.chartColor.line
             }],
@@ -943,9 +949,7 @@
                 color: "#01a6ff"
               }
             },
-            tooltip: {
-              show: false
-            },
+            tooltip: { show: false },
             series: [
               {
                 type: "pie",
@@ -965,9 +969,7 @@
                   }
                 },
                 labelLine: {
-                  normal: {
-                    show: false
-                  }
+                  normal: { show: false }
                 },
                 data: [{
                   value: data[1],
@@ -1044,34 +1046,24 @@
             type: "category",
             boundaryGap: false,
             axisLine: {
-              lineStyle: {
-                color: "#282896"
-              }
+              lineStyle: { color: "#282896" }
             },
-            axisTick: {
-              show: false
-            },
+            axisTick: { show: false },
             axisLabel: {
               textStyle: {
                 color: "#96d2ff",
                 fontSize: .05 * that.REM,
               }
             },
-            splitLine: {
-              show: false
-            },
+            splitLine: { show: false },
             data: data.data[0].x
           },
           yAxis: {
             type: "value",
             axisLine: {
-              lineStyle: {
-                color: "#282896"
-              }
+              lineStyle: { color: "#282896" }
             },
-            axisTick: {
-              show: false
-            },
+            axisTick: { show: false },
             axisLabel: {
               textStyle: {
                 color: "#96d2ff",
@@ -1079,9 +1071,7 @@
               }
             },
             splitLine: {
-              lineStyle: {
-                color: "#282896"
-              }
+              lineStyle: { color: "#282896" }
             }
           },
           series: series
@@ -1133,9 +1123,7 @@
               labelLine: {
                 normal: {
                   show: false,
-                  lineStyle: {
-                    color: "#96d2ff"
-                  }
+                  lineStyle: { color: "#96d2ff" }
                 }
               },
 
@@ -1172,6 +1160,7 @@
         }
         that.pie.resize();
         that.line.resize();
+        that.mulBar.resize();
       },
 
       autoScroll() {
@@ -1240,6 +1229,7 @@
 
       closePopup() {
         this.PopupOption.isShow = false;
+        this.PopupOption.size = "";
         this.PopupOption.row = 6;
         this.PopupOption.pagination.length = 0;
         this.repairList = [];
@@ -1247,7 +1237,7 @@
         this.IoTList = [];
       },
 
-      timerPopup(time = 30000) {
+      timerPopup(time = 600000) {
         var that = this;
         clearTimeout(that.PopupOption.timer);
         that.PopupOption.timer = setTimeout(function () {
@@ -1289,9 +1279,7 @@
             {
               type: "category",
               axisLine: that.chartColor.line,
-              axisTick: {
-                show: false
-              },
+              axisTick: { show: false },
               axisLabel: {
                 textStyle: {
                   color: "#96d2ff",
@@ -1307,12 +1295,8 @@
               type: "value",
               max: 2,
               axisLine: that.chartColor.line,
-              axisTick: {
-                show: false
-              },
-              axisLabel: {
-                show: false
-              },
+              axisTick: { show: false },
+              axisLabel: { show: false },
               splitLine: that.chartColor.line,
             }
           ],
@@ -1340,19 +1324,27 @@
       },
 
       getIoTList(code) {
+        var codeZh = ["离线", "待机", "运行", "报警"];
         this.closePopup();
         this.closeCharts();
         this.Toast({ text: "正在加载", icon: "loading" }, 30000);
         this.$ReqScreen.getIotDeviceList({ pageIndex: 1, pageSize: 1000, status: code }).then((res) => {
-          this.IoTList = res.data.list;
-          for (var i = 0; i < Math.ceil(res.data.recordCount / 4); i++) {
-            this.PopupOption.pagination[i] = i + 1;
+          if (res.data.list.length) {
+            this.IoTList = res.data.list;
+            for (var i = 0; i < Math.ceil(res.data.recordCount / 10); i++) {
+              this.PopupOption.pagination[i] = i + 1;
+            }
+            this.switchPage(1, 10, res.data.list);
+            this.PopupOption.type = "info";
+            this.PopupOption.size = "large";
+            this.PopupOption.title = codeZh[code] + "设备";
+            this.Toast({}, 0);
+            this.showPopup();
           }
-          this.switchPage(1, 4, res.data.list);
-          this.PopupOption.type = "info";
-          this.PopupOption.title = "IoT设备";
-          this.Toast({}, 0);
-          this.showPopup();
+          else {
+            this.Toast({ text: "暂无数据", icon: "warn" });
+          }
+
         });
       },
 
@@ -1371,7 +1363,7 @@
         this.$forceUpdate();
       },
 
-      ShowCharts(id) {
+      ShowCharts(id, name = "设备图表") {
         this.Toast({ text: "正在加载", icon: "loading" }, 30000);
         var that = this,
           data = [["RunDate"]];
@@ -1389,8 +1381,12 @@
                 data: ["稼动率", "运行时间", "待机时间", "报警时间"],
                 top: "3.5%",
                 textStyle: {
-                  color: "#fff"
-                }
+                  color: "#96d2ff",
+                  fontSize: .05 * that.REM,
+                  lineHeight: .05 * that.REM,
+                },
+                itemWidth: .1 * that.REM,
+                itemHeight: .05 * that.REM
               },
               tooltip: {
                 trigger: "axis",
@@ -1418,9 +1414,7 @@
               xAxis: [{
                 type: "category",
                 axisLine: that.chartColor.line,
-                axisTick: {
-                  show: false
-                },
+                axisTick: { show: false },
                 axisLabel: that.chartColor.text,
                 data: data.x
               }],
@@ -1429,23 +1423,59 @@
                 min: 0,
                 max: 24,
                 axisLine: that.chartColor.line,
-                axisTick: {
-                  show: false
+                axisTick: { show: false },
+                axisLabel: {
+                  formatter: function (params) {
+                    return params + "小时";
+                  },
+                  textStyle: {
+                    color: "#96d2ff",
+                    fontSize: .05 * fontSize(),
+                  },
                 },
-                axisLabel: that.chartColor.text,
+                splitLine: { show: false }
+              }, {
+                type: "value",
+                position: "right",
+                min: 0,
+                max: 100,
+                axisLine: that.chartColor.line,
+                axisTick: { show: false },
+                axisLabel: {
+                  formatter: function (params) {
+                    return params + "%";
+                  },
+                  textStyle: {
+                    color: "#96d2ff",
+                    fontSize: .05 * fontSize(),
+                  },
+                },
                 splitLine: that.chartColor.line
               }],
-              series: [
-                { type: "line", name: "稼动率" },
-                { type: "bar", barWidth: "15%", name: "运行时间" },
-                { type: "bar", barWidth: "15%", name: "待机时间" },
-                { type: "bar", barWidth: "15%", name: "报警时间" },
+              series: [{
+                type: "line",
+                name: "稼动率",
+                label: {
+                  show: true,
+                  position: "top",
+                  formatter: function (params) {
+                    return parseInt(params.data[1] * 4.1667) + "%"
+                  },
+                  textStyle: {
+                    color: "#96d2ff",
+                    fontSize: .05 * fontSize(),
+                  }
+                }
+              },
+              { type: "bar", barWidth: "15%", name: "运行时间" },
+              { type: "bar", barWidth: "15%", name: "待机时间" },
+              { type: "bar", barWidth: "15%", name: "报警时间" },
               ]
             };
-            that.PopupCharts = true;
+            that.PopupCharts.title = name;
+            that.PopupCharts.isShow = true;
             that.Toast({}, 0);
             that.mulBar.setOption(option);
-            that.mulBar.resize();
           }
           else {
             this.Toast({ text: "暂无数据", icon: "warn" });
@@ -1455,7 +1485,7 @@
       },
 
       closeCharts() {
-        this.PopupCharts = false;
+        this.PopupCharts.isShow = false;
       }
 
     },
@@ -1716,11 +1746,6 @@
   .middle0 .main1 {
     position: absolute;
     top: 1.7rem;
-    float: left;
-    width: 100%;
-  }
-
-  .middle0 .main1 ul {
     width: 0.48rem;
   }
 
@@ -1759,10 +1784,6 @@
     float: left;
     width: 100%;
     z-index: 10;
-  }
-
-  .middle0 .main2 ul {
-    width: 100%;
   }
 
   .middle0 .main2 li {

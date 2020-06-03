@@ -7,11 +7,10 @@ class REQ_SCREEN {
     return request({
       url: `/ZTL_Statistics/LargeScreen/GetDeviceCount`,
       data: data,
-      header: {
+      headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
       method: 'GET',
-
     });
   }
 
@@ -20,7 +19,7 @@ class REQ_SCREEN {
     return request({
       url: `/ZTL_Statistics/LargeScreen/GetDeviceMonitorCount`,
       data: data,
-      header: {
+      headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
       method: 'GET',

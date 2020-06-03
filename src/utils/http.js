@@ -7,8 +7,8 @@ import axios from 'axios';
 export const TIME_OUT = 30000; // 请求超时时间
 export const ERR_OK = true; // 请求成功返回状态，字段和后台统一
 // export const baseUrl = process.env.BASE_URL // 引入全局url，定义在全局变量process.env中，开发环境为了方便转发，值为空字符串
-// export const baseUrl = "http://157.116.13.40:9002"
-export const baseUrl = "http://device.nacks.com:9002"
+// export const baseUrl = "http://157.116.13.40:9002";
+export const baseUrl = "http://device.nacks.com:9002";
 
 // 请求超时时间
 axios.defaults.timeout = TIME_OUT
